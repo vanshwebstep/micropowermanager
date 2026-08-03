@@ -81,9 +81,9 @@
           </div>
 
           <div class="field-group full-width">
-            <label>Cluster</label>
+            <label>State</label>
             <select v-model="person.clusterId" class="field-input">
-              <option :value="null">-- Select Cluster --</option>
+              <option :value="null">-- Select State --</option>
               <option v-for="cluster in clusterService.list" :key="cluster.id" :value="cluster.id">
                 {{ cluster.name }}
               </option>

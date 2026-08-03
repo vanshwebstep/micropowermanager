@@ -8,7 +8,7 @@ Step 1 - Clone & Setup
 
 ~ cd /var/www
 ~ rm -rf micropowermanager
-~ git clone https://github.com/rohitwebstep/micropowermanager.git
+~ git clone https://github.com/vanshwebstep/micropowermanager.git
 
 ~ cd micropowermanager
 ~ cd backend
