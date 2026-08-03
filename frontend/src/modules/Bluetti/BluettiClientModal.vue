@@ -144,7 +144,7 @@ export default {
         nin: "",
         email: "",
         phone: "",
-        cityId: null,
+        cityId: 1,
         clusterId: null,
         street: "",
       },
@@ -204,7 +204,7 @@ export default {
     reset() {
       this.person = {
         title: "", name: "", surname: "", birthDate: "", gender: "",
-        nin: "", email: "", phone: "", cityId: null, clusterId: null, street: "",
+        nin: "", email: "", phone: "", cityId: 1, clusterId: null, street: "",
       }
       this.errors = {}
     },
