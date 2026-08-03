@@ -175,7 +175,9 @@ class PersonService implements IBaseService
             'gender' => $request->get('gender'),
             'is_customer' => $request->get('is_customer') ?? 0,
             'mini_grid_id' => $request->get('mini_grid_id'),
+            'cluster_id' => $request->get('cluster_id'),
             'bluetti_type' => $request->get('bluetti_type'),
+            'national_id_number' => $request->get('national_id_number'),
         ];
     }
 
@@ -389,6 +391,7 @@ class PersonService implements IBaseService
                 'external_customer_id',
                 'national_id_number',
                 'mini_grid_id',
+                'cluster_id',
                 'title',
                 'education',
                 'name',

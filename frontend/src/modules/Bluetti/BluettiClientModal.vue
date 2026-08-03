@@ -45,8 +45,16 @@
           </div>
 
           <div class="field-group">
-            <label>Education</label>
-            <input v-model="person.education" class="field-input" />
+            <label>NIN *</label>
+            <input
+              v-model="person.nin"
+              class="field-input"
+              placeholder="11-digit National ID Number"
+              maxlength="11"
+              inputmode="numeric"
+              @input="person.nin = person.nin.replace(/\D/g, '').slice(0, 11)"
+            />
+            <span v-if="errors.nin" class="field-error">{{ errors.nin }}</span>
           </div>
 
           <div class="field-group">
@@ -70,6 +78,17 @@
               </option>
             </select>
             <span v-if="errors.cityId" class="field-error">{{ errors.cityId }}</span>
+          </div>
+
+          <div class="field-group full-width">
+            <label>Cluster</label>
+            <select v-model="person.clusterId" class="field-input">
+              <option :value="null">-- Select Cluster --</option>
+              <option v-for="cluster in clusterService.list" :key="cluster.id" :value="cluster.id">
+                {{ cluster.name }}
+              </option>
+            </select>
+            <span v-if="errors.clusterId" class="field-error">{{ errors.clusterId }}</span>
           </div>
 
           <div class="field-group full-width">
@@ -100,6 +119,7 @@
 <script>
 import { PersonService } from "@/services/PersonService"
 import { CityService } from "@/services/CityService"
+import { ClusterService } from "@/services/ClusterService"
 
 export default {
   name: "BluettiClientModal",
@@ -113,6 +133,7 @@ export default {
     return {
       personService: new PersonService(),
       cityService: new CityService(),
+      clusterService: new ClusterService(),
       loading: false,
       errors: {},
       person: {
@@ -121,16 +142,18 @@ export default {
         surname: "",
         birthDate: "",
         gender: "",
-        education: "",
+        nin: "",
         email: "",
         phone: "",
         cityId: null,
+        clusterId: null,
         street: "",
       },
     }
   },
   beforeMount() {
     this.cityService.getCities()
+    this.clusterService.getClusters()
   },
   methods: {
     validate() {
@@ -139,6 +162,7 @@ export default {
       if (!this.person.surname || this.person.surname.length < 2) this.errors.surname = "Surname is required"
       if (!this.person.phone || this.person.phone.length < 11) this.errors.phone = "Valid phone is required"
       if (!this.person.cityId) this.errors.cityId = "City is required"
+      if (!this.person.nin || !/^\d{11}$/.test(this.person.nin)) this.errors.nin = "NIN must be exactly 11 digits"
       if (this.person.email && !/\S+@\S+\.\S+/.test(this.person.email)) this.errors.email = "Invalid email"
       return Object.keys(this.errors).length === 0
     },
@@ -153,10 +177,11 @@ export default {
           surname: this.person.surname,
           birthDate: this.person.birthDate || null,
           gender: this.person.gender,
-          education: this.person.education,
+          nationalIdNumber: this.person.nin,
           email: this.person.email,
           phone: this.person.phone,
           cityId: this.person.cityId,
+          clusterId: this.person.clusterId,
           street: this.person.street,
           isPrimary: true,
           isCustomer: true,
@@ -180,7 +205,7 @@ export default {
     reset() {
       this.person = {
         title: "", name: "", surname: "", birthDate: "", gender: "",
-        education: "", email: "", phone: "", cityId: null, street: "",
+        nin: "", email: "", phone: "", cityId: null, clusterId: null, street: "",
       }
       this.errors = {}
     },

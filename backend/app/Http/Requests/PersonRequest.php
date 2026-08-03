@@ -39,11 +39,19 @@ class PersonRequest extends FormRequest {
             'gender' => ['sometimes', 'nullable', 'string'],
             'education' => ['sometimes', 'nullable', 'string'],
             'city_id' => ['sometimes', 'integer', 'exists:tenant.cities,id'],
+            'cluster_id' => ['sometimes', 'nullable', 'integer', 'exists:tenant.clusters,id'],
             'street' => ['sometimes', 'nullable', 'string', 'min:5'],
             'email' => ['sometimes', 'nullable', 'email'],
             'phone' => ['sometimes', 'min:11'],
             'country_code' => ['sometimes', 'nullable', 'string'],
             'bluetti_type' => ['sometimes', 'nullable', 'string'],
+            'national_id_number' => ['sometimes', 'nullable', 'digits:11'],
+        ];
+    }
+
+    public function messages(): array {
+        return [
+            'national_id_number.digits' => 'NIN must be exactly 11 digits.',
         ];
     }
 }
