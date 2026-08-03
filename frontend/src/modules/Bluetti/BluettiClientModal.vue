@@ -69,10 +69,9 @@
             <span v-if="errors.phone" class="field-error">{{ errors.phone }}</span>
           </div>
 
-          <div class="field-group full-width">
+          <div class="field-group full-width" style="display:none">
             <label>City *</label>
             <select v-model="person.cityId" class="field-input">
-              <option :value="null">-- Select City --</option>
               <option v-for="city in cityService.list" :key="city.id" :value="city.id">
                 {{ city.name }}
               </option>
