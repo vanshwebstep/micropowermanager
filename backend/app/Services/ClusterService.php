@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Services;
+
+use App\DTO\ClusterDashboardData;
+use App\Models\Cluster;
+use App\Services\Interfaces\IBaseService;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+/**
+ * @implements IBaseService<Cluster>
+ */
+class ClusterService implements IBaseService
+{
+    public function __construct(
+        private Cluster $cluster,
+    ) {}
+
+    /**
+     * Creates a cluster dashboard data container with computed fields.
+     * This method does not mutate the cluster model.
+     */
+    public function getClusterWithComputedData(
+        Cluster $cluster,
+        int $meterCount,
+        float $totalTransactionsAmount,
+        int $populationCount,
+    ): ClusterDashboardData {
+        return new ClusterDashboardData(
+            cluster: $cluster,
+            meterCount: $meterCount,
+            revenue: $totalTransactionsAmount,
+            population: $populationCount,
+        );
+    }
+
+    public function getClusterCities(int $clusterId): ?Cluster
+    {
+        return Cluster::query()->with('cities')->find($clusterId);
+    }
+
+    public function getClusterMiniGrids(int $clusterId): ?Cluster
+    {
+        return Cluster::query()->with('miniGrids')->find($clusterId);
+    }
+
+    public function getGeoLocationById(int $clusterId): mixed
+    {
+        return $this->cluster->newQuery()->select('geo_json')->find($clusterId)->geo_json;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getDateRangeFromRequest(?string $startDate, ?string $endDate): array
+    {
+        $dateRange = [];
+
+        if ($startDate !== null && $endDate !== null) {
+            $dateRange[0] = $startDate;
+            $dateRange[1] = $endDate;
+        } else {
+            $dateRange[0] = date('Y-m-d', strtotime('today - 31 days'));
+            $dateRange[1] = date('Y-m-d', strtotime('today - 1 days'));
+        }
+
+        return $dateRange;
+    }
+
+    public function getById(int $clusterId): Cluster
+    {
+        return $this->cluster->newQuery()->with(['miniGrids.location', 'miniGrids.cities', 'miniGrids.people.orders.meter', 'cities'])->find($clusterId);
+    }
+
+    public function getByName(string $clusterName): Cluster
+    {
+        return $this->cluster->newQuery()->with(['miniGrids.location', 'miniGrids.cities', 'miniGrids.people.orders.meter', 'cities'])->where('name', $clusterName)->first();
+    }
+
+    /**
+     * @param array<string, mixed> $clusterData
+     */
+    public function create(array $clusterData): Cluster
+    {
+        return $this->cluster->newQuery()->create($clusterData);
+    }
+
+    /**
+     * @return Collection<int, Cluster>|LengthAwarePaginator<int, Cluster>
+     */
+    public function getAll(
+        ?int $limit = null,
+        string $type = 'main'
+    ): Collection|LengthAwarePaginator {
+
+        $query = $this->cluster->newQuery();
+
+        if ($type === 'dropdown') {
+
+            $query->select('id', 'name', 'manager_id')
+                ->with([
+                    'miniGrids:id,cluster_id,name',
+                    'miniGrids.cities:id,name,country_id,cluster_id,mini_grid_id'
+                ]);
+        } else {
+            // MAIN (default - full data)
+            $query->with([
+                'cities',
+                'miniGrids',
+                'miniGrids.cities',
+            ]);
+        }
+
+        if ($limit !== null) {
+            return $query->limit($limit)->get();
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function update($model, array $data): Cluster
+    {
+        throw new \Exception('Method update() not yet implemented.');
+    }
+
+    public function delete($model): ?bool
+    {
+        throw new \Exception('Method delete() not yet implemented.');
+    }
+
+    /**
+     * @return Collection<int, Cluster>
+     */
+    public function getAllForExport(): Collection
+    {
+        return $this->cluster->newQuery()->with([
+            'miniGrids',
+            'cities',
+            'manager',
+        ])->get();
+    }
+}

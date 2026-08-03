@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\ApiResource;
+use App\Services\TransactionService;
+use Illuminate\Http\Request;
+
+class TransactionAdvancedController extends Controller {
+    public function __construct(
+        private TransactionService $transactionService,
+    ) {}
+
+    public function searchAdvanced(Request $request): ApiResource {
+        $deviceType = $request->input('deviceType') ?: 'all';
+        $serialNumber = $request->input('serial_number');
+        $tariffId = $request->input('tariff');
+        $transactionProvider = $request->input('provider');
+        if (in_array($transactionProvider, [null, '', '-1'], true)) {
+            $transactionProvider = 'all';
+        }
+        $status = $request->input('status');
+        $fromDate = $request->input('from');
+        $toDate = $request->input('to');
+        $limit = (int) $request->input('per_page', '15');
+
+        return ApiResource::make($this->transactionService->search(
+            $deviceType,
+            $serialNumber,
+            $tariffId !== null ? (int) $tariffId : null,
+            $transactionProvider,
+            $status !== null ? (int) $status : null,
+            $fromDate,
+            $toDate,
+            $limit
+        ));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function compare(string $period): array {
+        $comparisonPeriod = $this->transactionService->determinePeriod((int) $period);
+        // get transactions for both current and previous periods
+        $transactions = $this->transactionService->getByComparisonPeriod($comparisonPeriod);
+        // get data for the current period
+        $currentTransactions = $this->transactionService->getAnalysis($transactions['current']->all()) ?? $this->transactionService->getEmptyCompareResult();
+        // get data for the previous period
+        $pastTransactions = $this->transactionService->getAnalysis($transactions['past']->all()) ?? $this->transactionService->getEmptyCompareResult();
+
+        // compare current period with the previous period
+        return [
+            'success' => true,
+            'current' => $currentTransactions,
+            'past' => $pastTransactions,
+            'analytics' => $this->transactionService->comparePeriods($currentTransactions, $pastTransactions),
+        ];
+    }
+}
