@@ -122,7 +122,7 @@ import BluettiAddDevice from "@/modules/Bluetti/AddDevice.vue"
 import BluettiUserList from "@/modules/Bluetti/BluettiUserList.vue"
 
 import BluettiDevicePage from "@/modules/Bluetti/BluettiDevicePage.vue"
-
+import BluettiEditDevice from "@/modules/Bluetti/EditDevice.vue"
 
 
 export const exportedRoutes = [
@@ -1889,6 +1889,15 @@ export const exportedRoutes = [
         path: "bluetti/device/:deviceId",
         name: "BluettiDevicePage",
         component: BluettiDevicePage,
+        meta: {
+          layout: "default",
+          sidebar: { enabled: false },
+        },
+      },
+      {
+        path: "bluetti/edit-device/:deviceId",
+        name: "BluettiEditDevice",
+        component: BluettiEditDevice,
         meta: {
           layout: "default",
           sidebar: { enabled: false },

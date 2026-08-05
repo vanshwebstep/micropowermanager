@@ -52,6 +52,8 @@
             <td>{{ formatDate(d.created_date || d.created_at) }}</td>
             <td>
               <button class="view-btn" @click="openView(d)">View</button>
+              <button class="edit-btn" @click="goToEdit(d)">Edit</button>
+
               <button class="delete-btn" @click="deleteDevice(d)">Delete</button>
             </td>
           </tr>
@@ -111,6 +113,7 @@ export default {
       showView: false,
       selectedDevice: null,
       filters: { search: "" },
+      isAssigned: false,
     }
   },
 
@@ -181,6 +184,10 @@ export default {
       this.$router.push("/dashboards/bluetti/add-device")
     },
 
+    goToEdit(d) {
+      this.$router.push(`/dashboards/bluetti/edit-device/${d.id}`)
+    },
+
    
     async deleteDevice(d) {
       const result = await this.$swal({
@@ -208,6 +215,7 @@ export default {
         this.$swal("Error", "Could not delete device", "error")
       }
     },
+
   },
 }
 </script>
@@ -309,5 +317,14 @@ td {
   padding: 2px 10px;
   border-radius: 12px;
   font-size: 12px;
+}
+.edit-btn {
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 6px;
 }
 </style>

@@ -40,11 +40,15 @@ class BluettiDeviceController extends Controller
         return response()->json(['data' => $device], 201);
     }
 
-    public function update(BluettiDeviceUpdateRequest $request, int $id): ApiResource
+    public function update(BluettiDeviceUpdateRequest $request, int $id): ApiResource|JsonResponse
     {
         $device  = $this->bluettiDeviceService->getById($id);
-        $updated = $this->bluettiDeviceService->update($device, $request->validated());
-        return ApiResource::make($updated);
+        try {
+            $updated = $this->bluettiDeviceService->update($device, $request->validated());
+            return ApiResource::make($updated);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     public function destroy(int $id): JsonResponse

@@ -82,4 +82,8 @@ export default {
   deleteTransaction(deviceId, txnId) {
     return Client.delete(`${resource}/${deviceId}/transactions/${txnId}`)
   },
+
+  update(deviceId, payload) {
+    return Client.put(`${resource}/${deviceId}`, payload)
+  },
 }

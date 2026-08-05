@@ -6,8 +6,8 @@ export default {
   create(cluster) {
     return Client.post(`${resource}`, cluster)
   },
-  list(type = null) {
-    return Client.get(`${resource}${type ? `?type=${type}` : ''}`)
+  list() {
+    return Client.get(`${resource}`)
   },
   getGeoLocation(clusterId) {
     return Client.get(`${resource}/${clusterId}/geo`)

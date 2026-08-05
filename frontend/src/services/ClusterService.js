@@ -27,9 +27,9 @@ export class ClusterService {
     }
   }
 
-  async getClusters(type = 'dropdown') {
+  async getClusters() {
     try {
-      const { data, status, error } = await this.repository.list(type)
+      const { data, status, error } = await this.repository.list()
       if (status !== 200) return new ErrorHandler(error, "http", status)
       this.clusters = data.data
       this.list = data.data

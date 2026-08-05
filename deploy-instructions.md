@@ -6,16 +6,16 @@ BACKEND
 
 Step 1 - Clone & Setup
 
-~ cd /var/www
-~ rm -rf micropowermanager
-~ git clone https://github.com/vanshwebstep/micropowermanager.git
+<!-- ~ cd /var/www -->
+<!-- ~ rm -rf micropowermanager -->
+<!-- ~ git clone https://github.com/vanshwebstep/micropowermanager.git -->
 
 ~ cd micropowermanager
 ~ cd backend
 
-~ sudo cp .env.example .env
+<!-- ~ sudo cp .env.example .env -->
 
-~ composer install --ignore-platform-reqs
+<!-- ~ composer install --ignore-platform-reqs -->
 
 ~ php artisan config:clear
 ~ php artisan route:clear
@@ -24,10 +24,6 @@ Step 1 - Clone & Setup
 ~ php artisan clear-compiled
 
 
-Step 2 - Refresh Database (Optional)
-
-# Run only if you want to refresh all migrations.
-~ php artisan migrate:refresh
 
 
 Step 3 - Start Backend Service

@@ -124,6 +124,10 @@ class BluettiDeviceService
 
     public function update(BluettiDevice $device, array $data): BluettiDevice
     {
+        if (isset($data['price']) && $device->customer_id && (float) $data['price'] !== (float) $device->price) {
+            throw new \Exception('Cannot change price — device is already assigned to a customer with an active payment plan.');
+        }
+
         $device->update($data);
         return $device->fresh();
     }
