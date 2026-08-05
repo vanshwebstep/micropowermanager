@@ -16,7 +16,7 @@
         :box-color="'red'"
         :center-text="true"
         :header-text="$tc('phrases.processedTransactions')"
-        :sub-text="moneyFormat(miniGridData.transactions[0].amount)"
+        :sub-text="String(miniGridData.transactions[0].amount)"
         :box-icon="'list'"
       />
     </div>
